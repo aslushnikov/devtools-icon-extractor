@@ -127,10 +127,16 @@ function generateCommands() {
 
 function extractIcon(svgRoot, d) {
   var iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  for (var attribute of svgRoot.attributes) {
+    if (!attribute.name.startsWith('xmlns'))
+      continue;
+    iconSvg.setAttribute(attribute.name, attribute.value);
+  }
   iconSvg.setAttribute('viewBox', `${-d.x} ${-d.y} ${d.width} ${d.height}`);
   iconSvg.setAttribute('width', d.width);
   iconSvg.setAttribute('height', d.height);
   iconSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  iconSvg.setAttribute('xmlns:inkscape', 'http://www.inkscape.org/namespaces/inkscape');
   var defs = svgRoot.querySelector('defs');
   if (defs) {
     var node = document.importNode(defs, true);
