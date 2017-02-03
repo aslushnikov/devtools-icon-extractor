@@ -1,0 +1,56 @@
+<!DOCTYPE HTML5>
+<script src="codemirror.js"></script>
+<link rel="stylesheet" href="codemirror.css">
+<script src="jsmode.js"></script>
+
+<script type="text/javascript" src="script.js"></script>
+<link rel="stylesheet" href="style.css">
+
+<div class="inputs">
+    <div class="spritesheets">
+        <fieldset class="spritesheet">
+            <legend>smallIcons.svg</legend>
+            <object type="image/svg+xml" data="smallIcons.svg" id="smallicons">
+              smallIcons.svg
+            </object>
+        </fieldset>
+
+        <fieldset class="spritesheet">
+            <legend>resourceGlyphs.svg</legend>
+            <object type="image/svg+xml" data="resourceGlyphs.svg" id="resourceicons">
+              resourceGlyphs.svg
+            </object>
+        </fieldset>
+
+        <fieldset class="spritesheet">
+            <legend>toolbarButtonGlyphs</legend>
+            <object type="image/svg+xml" data="toolbarButtonGlyphs.svg" id="largeicons">
+              toolbarButtonGlyphs.svg
+            </object>
+        </fieldset>
+
+        <div class="actions">
+            <button id="extract-button">extract icons</button>
+        </div>
+
+    </div>
+    <fieldset class="descriptors">
+        <legend>Icon Descriptors</legend>
+        <div class="editor">
+        </div>
+    </fieldset>
+</div>
+<hr>
+<div class="output">
+    <div class="output-column output-success">
+        <h1 class="title">Extracted: <span class="stats-extracted">0</span></h1>
+        <div class="extracted-icons">
+        </div>
+    </div>
+    <div class="border"></div>
+    <div class="output-column output-fail">
+        <h1 class="title">Failed: <span class="stats-failed">0</span></h1>
+        <div class="failed-icons">
+        </div>
+    </div>
+</div>

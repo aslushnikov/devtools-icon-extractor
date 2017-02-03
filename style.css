@@ -1,0 +1,114 @@
+body {
+    font-family: helvetica;
+}
+
+.inputs {
+    display: flex;
+    height: 400px;
+}
+
+.spritesheets {
+    display: flex;
+    flex-direction: column;
+}
+
+.spritesheet {
+    margin-top: 1em;
+    font-family: monospace;
+    font-size: 16px;
+}
+
+.spritesheet legend {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.spritesheet:first-child {
+    margin-top: 0;
+}
+
+.spritesheet object {
+    box-shadow: 1px 1px 2px 2px #ddd;
+}
+
+.descriptors {
+    position: relative;
+    width: 50em;
+}
+
+.descriptors .editor {
+    position: absolute;
+    top: 1em;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.descriptors div textarea {
+    width: 100%;
+    height: 100%;
+    border: 0px;
+    resize: none;
+}
+
+.descriptors div textarea:focus {
+    outline: none;
+}
+
+.actions {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#extract-button {
+    font-size: 24px;
+}
+
+.output {
+    display: flex;
+}
+
+.output-column {
+    flex-grow: 1;
+}
+
+.output-success .title {
+    color: green;
+}
+
+.output-fail .title {
+    color: red;
+}
+
+.icon svg {
+    box-shadow: 1px 1px 2px 2px #ddd;
+}
+
+.output-success .icon {
+    text-align: center;
+    border: 1px solid #77b768;
+    flex-direction: row;
+    align-items: center;
+    margin: 10px;
+    padding: 2px;
+}
+
+.output-success .icon .icon-title {
+    font-size: 12px;
+}
+
+
+.output-fail .icon-error {
+    border: 1px solid #ea8181;
+    flex-direction: row;
+    align-items: center;
+    margin: 10px;
+    padding: 2px;
+}
+
+.output-fail .icon-title {
+    text-align:center;
+    font-size: 12px;
+}
