@@ -114,18 +114,15 @@ function renderIcons() {
   }
 }
 
-function extractIcons2(svgRoot, spritesheet) {
+function generateCommands() {
   var commands = [];
-  for (var name in UI.Icon.Descriptors) {
-    var d = UI.Icon.Descriptors[name];
-    if (d.spritesheet !== spritesheet || d.transform)
-      continue;
-    var svgText = extractIcon(svgRoot, d).outerHTML;
+  for (var name of icons.keys()) {
+    var svgText = icons.get(name).outerHTML;
     var fileName = name + '.svg';
     commands.push(`touch ${fileName}`);
     commands.push(`echo '${svgText}' > ${fileName}`);
   }
-  //copy(commands.join(';'));
+  return commands;
 }
 
 function extractIcon(svgRoot, d) {
