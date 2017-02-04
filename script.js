@@ -42,6 +42,8 @@ function extractIcons() {
   icons = new Map();
   for (var name in descriptors) {
     var descriptor = descriptors[name];
+    if (descriptor.isMask)
+        name = name + '-mask';
     if (descriptor.transform) {
       iconErrors.set(name, 'Cannot extract icons with transforms');
       continue;
