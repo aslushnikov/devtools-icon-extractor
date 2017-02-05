@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', onDOMLoaded);
 
 var editor;
+var descriptors = {};
 var icons = new Map();
 var iconErrors = new Map();
 
@@ -29,11 +30,11 @@ function onDOMLoaded() {
 function extractIcons() {
   resetRendering();
 
-  var descriptors;
   try {
     descriptors = eval('(' + editor.getValue() + ')');
   } catch (e) {
     alert('Error parsing descriptors: ' + e);
+    descriptors = {};
     return;
   }
 
@@ -151,8 +152,8 @@ function extractIcon(svgRoot, d) {
 
 function copyNodesInRegion(x, y, w, h, container, node) {
   var rect = node.getBoundingClientRect();
-  if (rect.left >= x && rect.left + rect.width <= x + w &&
-    rect.top >= y && rect.top + rect.height <= y + h) {
+  if (gte(rect.left, x) && lte(rect.left + rect.width, x + w) &&
+    gte(rect.top, y) && lte(rect.top + rect.height, y + h)) {
     var node = document.importNode(node, true);
     container.appendChild(node);
     return;
@@ -162,7 +163,12 @@ function copyNodesInRegion(x, y, w, h, container, node) {
     copyNodesInRegion(x, y, w, h, container, child);
 }
 
-// extractIcons(document.querySelector('svg'), 'smallicons');
-//extractIcons('resourceicons');
-//extractIcon(UI.Icon.Descriptors['smallicon-inline-breakpoint-conditional']);
-//extractIcon(UI.Icon.Descriptors['smallicon-thick-left-arrow']);
+var EPS = 1e-3;
+function lte(a, b) {
+    return a - b < -EPS || Math.abs(a - b) < EPS;
+}
+
+function gte(a, b) {
+    return a - b > EPS || Math.abs(a - b) < EPS;
+}
+
