@@ -44,7 +44,7 @@ function onDOMLoaded() {
     object.addEventListener('load', fulfill);
     promises.push(promise);
   }
-  Promise.all(promises).then(extractIcons);
+  //Promise.all(promises).then(extractIcons);
 }
 
 function extractIcons() {
@@ -61,8 +61,22 @@ function extractIcons() {
   var inputs = document.querySelector('.inputs');
   iconErrors = new Map();
   icons = new Map();
+  var enableSmallIcons = document.querySelector('#checkbox_smallIcons').checked;
+  var enableMediumIcons = document.querySelector('#checkbox_mediumIcons').checked;
+  var enableLargeIcons = document.querySelector('#checkbox_largeIcons').checked;
   for (var name in descriptors) {
     var descriptor = descriptors[name];
+    if (descriptor.width <= 10 && descriptor.height <= 10) {
+        if (!enableSmallIcons)
+            continue;
+    } else if (descriptor.width === 28 && descriptor.height === 24) {
+        if (!enableLargeIcons)
+            continue;
+    } else {
+        if (!enableMediumIcons)
+            continue;
+    }
+
     if (descriptor.isMask)
         name = name + '-mask';
     if (descriptor.transform) {
@@ -163,8 +177,9 @@ function copyNodesInRegion(x, y, w, h, container, node) {
   var rect = node.getBoundingClientRect();
   if (gte(rect.left, x) && lte(rect.left + rect.width, x + w) &&
     gte(rect.top, y) && lte(rect.top + rect.height, y + h)) {
-    var node = document.importNode(node, true);
-    container.appendChild(node);
+    var importedNode = document.importNode(node, true);
+    container.appendChild(importedNode);
+    node.remove();
     return;
   }
   var children = Array.prototype.slice.call(node.children);
@@ -172,7 +187,7 @@ function copyNodesInRegion(x, y, w, h, container, node) {
     copyNodesInRegion(x, y, w, h, container, child);
 }
 
-var EPS = 1e-3;
+var EPS = 0.1;
 function lte(a, b) {
     return a - b < -EPS || Math.abs(a - b) < EPS;
 }

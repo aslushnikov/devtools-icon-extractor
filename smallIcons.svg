@@ -14,7 +14,7 @@
    height="30"
    id="svg3250"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.92.0 r"
    sodipodi:docname="smallIcons.svg">
   <defs
      id="defs3252">
@@ -416,13 +416,13 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="11"
-     inkscape:cx="12.179671"
-     inkscape:cy="-3.2079823"
+     inkscape:cx="175.27058"
+     inkscape:cy="11.337472"
      inkscape:document-units="px"
      inkscape:current-layer="svg3250"
      showgrid="true"
      inkscape:window-width="1278"
-     inkscape:window-height="1546"
+     inkscape:window-height="756"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0">
@@ -433,9 +433,11 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       spacingx="10px"
-       spacingy="10px"
-       dotted="false" />
+       spacingx="10"
+       spacingy="10"
+       dotted="false"
+       originx="0"
+       originy="0" />
   </sodipodi:namedview>
   <metadata
      id="metadata3255">
@@ -668,16 +670,12 @@
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccccc" />
   </g>
-  <g
-     transform="matrix(-1,0,0,1,370,-19.954546)"
-     id="g1855-3">
-    <path
-       style="fill:#4688f1;fill-opacity:1"
-       d="m 186,20 -5,5 5,5 0,-2 3,0 0,-6 -3,0 z"
-       id="path3660-9-6"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccccccc" />
-  </g>
+  <path
+     sodipodi:nodetypes="cccccccc"
+     inkscape:connector-curvature="0"
+     id="path3660-9-6"
+     d="m 184,0.045454 5,5 -5,5 v -2 h -3 v -6 h 3 z"
+     style="fill:#4688f1;fill-opacity:1" />
   <g
      id="g3426"
      transform="matrix(-0.89336027,0,0,0.81468821,290.27165,4.6327948)"

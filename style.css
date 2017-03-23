@@ -4,7 +4,6 @@ body {
 
 .inputs {
     display: flex;
-    height: 400px;
 }
 
 .spritesheets {
@@ -55,11 +54,9 @@ body {
     outline: none;
 }
 
-.actions {
-    flex-grow: 1;
+.action-checkboxes {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
 }
 
 #extract-button {
