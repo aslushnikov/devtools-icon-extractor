@@ -209,18 +209,23 @@ function extractIcon(svgRoot, d, toBeRemoved) {
       continue;
     iconSvg.setAttribute(attribute.name, attribute.value);
   }
-  iconSvg.setAttribute('viewBox', `${-d.x} ${-d.y} ${d.width} ${d.height}`);
+  var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
   iconSvg.setAttribute('width', d.width);
   iconSvg.setAttribute('height', d.height);
   iconSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
   iconSvg.setAttribute('xmlns:inkscape', 'http://www.inkscape.org/namespaces/inkscape');
+  iconSvg.appendChild(g);
+
+  g.setAttribute('transform', `translate(${d.x} ${d.y})`);
+
   var defs = svgRoot.querySelector('defs');
   if (defs) {
     var node = document.importNode(defs, true);
     iconSvg.appendChild(node);
   }
 
-  copyNodesInRegion(-d.x, -d.y, d.width, d.height, iconSvg, svgRoot, toBeRemoved);
+  copyNodesInRegion(-d.x, -d.y, d.width, d.height, g, svgRoot, toBeRemoved);
   return iconSvg;
 }
 
