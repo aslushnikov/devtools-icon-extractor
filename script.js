@@ -21,16 +21,6 @@ function saveZip() {
         var bucket = buckets.get(name);
         var fileName = bucket + '/' + name + '.svg';
         folder.file(fileName, svgText);
-        /*
-        if (bucket === 'small')
-            smallIconsFolder.file(fileName, svgText);
-        else if (bucket === 'medium')
-            mediumIconsFolder.file(fileName, svgText);
-        else if (bucket === 'large')
-            largeIconsFolder.file(fileName, svgText);
-        else
-            throw new Error('undefiend folder!');
-        */
     }
     zip.generateAsync({type:"blob"}).then(function (blob) {
         saveAs(blob, "icons.zip");
@@ -59,7 +49,10 @@ function onDOMLoaded() {
     object.addEventListener('load', fulfill);
     promises.push(promise);
   }
-  //Promise.all(promises).then(extractIcons);
+  Promise.all(promises).then(() => {
+    document.querySelector("#savezip").removeAttribute('disabled');
+    document.querySelector("#extract-button").removeAttribute('disabled');
+  });
 }
 
 function getSpriteSheetSVG(spritesheet) {
@@ -91,25 +84,24 @@ function extractIcons() {
   var enableLargeIcons = document.querySelector('#checkbox_largeIcons').checked;
   document.querySelector('#checkbox_largeIcons').checked = false;
   var skippedDescriptors = {};
-  for (var name in descriptors) {
-    var descriptor = descriptors[name];
-    if (descriptor.isMask)
-        name = name + '-mask';
+  for (var originalName in descriptors) {
+    var descriptor = descriptors[originalName];
+    var name = descriptor.isMask ? originalName + '-mask' : originalName;
     if (descriptor.width <= 10 && descriptor.height <= 10) {
         if (!enableSmallIcons) {
-            skippedDescriptors[name] = descriptor;
+            skippedDescriptors[originalName] = descriptor;
             continue;
         }
         buckets.set(name, 'small');
     } else if (descriptor.width === 28 && descriptor.height === 24) {
         if (!enableLargeIcons) {
-            skippedDescriptors[name] = descriptor;
+            skippedDescriptors[originalName] = descriptor;
             continue;
         }
         buckets.set(name, 'large');
     } else {
         if (!enableMediumIcons) {
-            skippedDescriptors[name] = descriptor;
+            skippedDescriptors[originalName] = descriptor;
             continue;
         }
         buckets.set(name, 'medium');
@@ -117,20 +109,20 @@ function extractIcons() {
 
     if (descriptor.transform) {
       iconErrors.set(name, 'Cannot extract icons with transforms');
-      skippedDescriptors[name] = descriptor;
+      skippedDescriptors[originalName] = descriptor;
       continue;
     }
     var svgRoot = getSpriteSheetSVG(descriptor.spritesheet);
     if (!svgRoot) {
       iconErrors.set(name, 'Failed to find icon spritesheet!');
-      skippedDescriptors[name] = descriptor;
+      skippedDescriptors[originalName] = descriptor;
       continue;
     }
 
     var svg = extractIcon(svgRoot, descriptor);
     if (!svg.childNodes.length) {
       iconErrors.set(name, 'Failed to find icon in the stylesheet (is there any?)');
-      skippedDescriptors[name] = descriptor;
+      skippedDescriptors[originalName] = descriptor;
       continue;
     }
     icons.set(name, svg);
