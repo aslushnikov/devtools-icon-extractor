@@ -179,7 +179,8 @@ function copyNodesInRegion(x, y, w, h, container, node) {
     gte(rect.top, y) && lte(rect.top + rect.height, y + h)) {
     var importedNode = document.importNode(node, true);
     container.appendChild(importedNode);
-    node.remove();
+    if (rect.left !== 0 || rect.right !== 0 || rect.top !== 0 || rect.bottom !== 0 || rect.width !== 0 || rect.height !== 0)
+        node.remove();
     return;
   }
   var children = Array.prototype.slice.call(node.children);
