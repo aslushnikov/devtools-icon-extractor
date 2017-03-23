@@ -5,10 +5,30 @@ var descriptors = {};
 var icons = new Map();
 var iconErrors = new Map();
 
+function saveZip() {
+    if (!icons.size) {
+        alert('There are no icons to save.');
+        return;
+    }
+    var zip = new JSZip();
+    var folder = zip.folder('icons');
+    for (var name of icons.keys()) {
+        var svgText = icons.get(name).outerHTML;
+        var fileName = name + '.svg';
+        folder.file(fileName, svgText);
+    }
+    zip.generateAsync({type:"blob"}).then(function (blob) {
+        saveAs(blob, "icons.zip");
+    });
+}
+
+
 function onDOMLoaded() {
   var container = document.querySelector('.descriptors div');
   document.querySelector('#extract-button').addEventListener('click', extractIcons, false);
   editor = CodeMirror(container);
+
+  document.querySelector('#savezip').addEventListener('click', saveZip);
 
   var loadPromise = fetch('icons.json')
     .then(response => response.text())
@@ -115,17 +135,6 @@ function renderIcons() {
 
     failedIcons.appendChild(iconDiv);
   }
-}
-
-function generateCommands() {
-  var commands = [];
-  for (var name of icons.keys()) {
-    var svgText = icons.get(name).outerHTML;
-    var fileName = name + '.svg';
-    commands.push(`touch ${fileName}`);
-    commands.push(`echo '${svgText}' > ${fileName}`);
-  }
-  return commands;
 }
 
 function extractIcon(svgRoot, d) {

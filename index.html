@@ -3,6 +3,7 @@
 <script src="codemirror/codemirror.js"></script>
 <script src="codemirror/jsmode.js"></script>
 <script src="jszip/jszip.min.js"></script>
+<script src="filesaver/FileSaver.min.js"></script>
 
 <script type="text/javascript" src="script.js"></script>
 <link rel="stylesheet" href="style.css">
@@ -42,26 +43,9 @@
     </fieldset>
 </div>
 <hr>
-<div class="extact-commands">
-To export these icons to the file system:
-<ol>
-    <li>Create empty <code>icons</code> folder
-    <li>Open DevTools, run <code>copy(generateCommands().join(';'))</code>.</li>
-    <li>There's a bash script in the clipboard now. Save it as <code>icons/gen.sh</code></li>
-    <li>Run the following in your Terminal</li>
-    <pre>
-$ cd icons/
-$ bash gen.sh             # script will create many SVG files
-$ npm install -g svgo     # install SVG optimizer/fixer
-$ mkdir -p ./optimized;   # create folder for optimized files
-$ for i in *.svg; do svgo --multipass --pretty $i optimized/$i; done
-    </pre>
-</ol>
-
-</div>
 <div class="output">
     <div class="output-column output-success">
-        <h1 class="title">Extracted: <span class="stats-extracted">0</span></h1>
+        <h1 class="title">Extracted: <span class="stats-extracted">0</span></h1><button id="savezip">Download all icons (chrome only)</button>
         <div class="extracted-icons">
         </div>
     </div>
