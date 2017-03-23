@@ -84,6 +84,7 @@ function extractIcons() {
   var enableLargeIcons = document.querySelector('#checkbox_largeIcons').checked;
   document.querySelector('#checkbox_largeIcons').checked = false;
   var skippedDescriptors = {};
+  var toBeRemoved = [];
   for (var originalName in descriptors) {
     var descriptor = descriptors[originalName];
     var name = descriptor.isMask ? originalName + '-mask' : originalName;
@@ -93,7 +94,7 @@ function extractIcons() {
             continue;
         }
         buckets.set(name, 'small');
-    } else if (descriptor.width === 28 && descriptor.height === 24) {
+    } else if (descriptor.width > 16 || descriptor.height > 16) {
         if (!enableLargeIcons) {
             skippedDescriptors[originalName] = descriptor;
             continue;
@@ -119,7 +120,7 @@ function extractIcons() {
       continue;
     }
 
-    var svg = extractIcon(svgRoot, descriptor);
+    var svg = extractIcon(svgRoot, descriptor, toBeRemoved);
     if (!svg.childNodes.length) {
       iconErrors.set(name, 'Failed to find icon in the stylesheet (is there any?)');
       skippedDescriptors[originalName] = descriptor;
@@ -127,6 +128,9 @@ function extractIcons() {
     }
     icons.set(name, svg);
   }
+
+  for (var node of toBeRemoved)
+    node.remove();
 
   var lines = [];
   for (var name in skippedDescriptors) {
@@ -198,7 +202,7 @@ function renderIcons() {
   }
 }
 
-function extractIcon(svgRoot, d) {
+function extractIcon(svgRoot, d, toBeRemoved) {
   var iconSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   for (var attribute of svgRoot.attributes) {
     if (!attribute.name.startsWith('xmlns'))
@@ -216,23 +220,23 @@ function extractIcon(svgRoot, d) {
     iconSvg.appendChild(node);
   }
 
-  copyNodesInRegion(-d.x, -d.y, d.width, d.height, iconSvg, svgRoot);
+  copyNodesInRegion(-d.x, -d.y, d.width, d.height, iconSvg, svgRoot, toBeRemoved);
   return iconSvg;
 }
 
-function copyNodesInRegion(x, y, w, h, container, node) {
+function copyNodesInRegion(x, y, w, h, container, node, toBeRemoved) {
   var rect = node.getBoundingClientRect();
   if (gte(rect.left, x) && lte(rect.left + rect.width, x + w) &&
     gte(rect.top, y) && lte(rect.top + rect.height, y + h)) {
     var importedNode = document.importNode(node, true);
     container.appendChild(importedNode);
     if (rect.left !== 0 || rect.right !== 0 || rect.top !== 0 || rect.bottom !== 0 || rect.width !== 0 || rect.height !== 0)
-        node.remove();
+        toBeRemoved.push(node);
     return;
   }
   var children = Array.prototype.slice.call(node.children);
   for (var child of children)
-    copyNodesInRegion(x, y, w, h, container, child);
+    copyNodesInRegion(x, y, w, h, container, child, toBeRemoved);
 }
 
 var EPS = 0.1;
