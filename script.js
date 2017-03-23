@@ -11,7 +11,11 @@ function saveZip() {
         return;
     }
     var zip = new JSZip();
-    var folder = zip.folder('icons');
+    var folder = zip.folder('results');
+    folder.file('smallIcons.svg', getSpriteSheetSVG('smallicons').outerHTML);
+    folder.file('resourceGlyphs.svg', getSpriteSheetSVG('resourceicons').outerHTML);
+    folder.file('toolbarButtonGlyphs.svg', getSpriteSheetSVG('largeicons').outerHTML);
+    folder = folder.folder('icons');
     for (var name of icons.keys()) {
         var svgText = icons.get(name).outerHTML;
         var fileName = name + '.svg';
@@ -47,6 +51,14 @@ function onDOMLoaded() {
   //Promise.all(promises).then(extractIcons);
 }
 
+function getSpriteSheetSVG(spritesheet) {
+    var inputs = document.querySelector('.inputs');
+    var svgRoot = inputs.querySelector('#' + spritesheet);
+    svgRoot = svgRoot ? svgRoot.contentDocument : null;
+    svgRoot = svgRoot ? svgRoot.querySelector('svg') : null;
+    return svgRoot;
+}
+
 function extractIcons() {
   resetRendering();
 
@@ -58,46 +70,74 @@ function extractIcons() {
     return;
   }
 
-  var inputs = document.querySelector('.inputs');
   iconErrors = new Map();
   icons = new Map();
   var enableSmallIcons = document.querySelector('#checkbox_smallIcons').checked;
+  document.querySelector('#checkbox_smallIcons').checked = false;
   var enableMediumIcons = document.querySelector('#checkbox_mediumIcons').checked;
+  document.querySelector('#checkbox_mediumIcons').checked = false;
   var enableLargeIcons = document.querySelector('#checkbox_largeIcons').checked;
+  document.querySelector('#checkbox_largeIcons').checked = false;
+  var skippedDescriptors = {};
   for (var name in descriptors) {
     var descriptor = descriptors[name];
     if (descriptor.width <= 10 && descriptor.height <= 10) {
-        if (!enableSmallIcons)
+        if (!enableSmallIcons) {
+            skippedDescriptors[name] = descriptor;
             continue;
+        }
     } else if (descriptor.width === 28 && descriptor.height === 24) {
-        if (!enableLargeIcons)
+        if (!enableLargeIcons) {
+            skippedDescriptors[name] = descriptor;
             continue;
+        }
     } else {
-        if (!enableMediumIcons)
+        if (!enableMediumIcons) {
+            skippedDescriptors[name] = descriptor;
             continue;
+        }
     }
 
     if (descriptor.isMask)
         name = name + '-mask';
     if (descriptor.transform) {
       iconErrors.set(name, 'Cannot extract icons with transforms');
+      skippedDescriptors[name] = descriptor;
       continue;
     }
-    var svgRoot = inputs.querySelector('#' + descriptor.spritesheet);
-    svgRoot = svgRoot ? svgRoot.contentDocument : null;
-    svgRoot = svgRoot ? svgRoot.querySelector('svg') : null;
+    var svgRoot = getSpriteSheetSVG(descriptor.spritesheet);
     if (!svgRoot) {
       iconErrors.set(name, 'Failed to find icon spritesheet!');
+      skippedDescriptors[name] = descriptor;
       continue;
     }
 
     var svg = extractIcon(svgRoot, descriptor);
     if (!svg.childNodes.length) {
       iconErrors.set(name, 'Failed to find icon in the stylesheet (is there any?)');
+      skippedDescriptors[name] = descriptor;
       continue;
     }
     icons.set(name, svg);
   }
+
+  var lines = [];
+  for (var name in skippedDescriptors) {
+    var d = skippedDescriptors[name];
+    var parts = [
+        `x: ${d.x}`,
+        `y: ${d.y}`,
+        `width: ${d.width}`,
+        `height: ${d.height}`,
+        `spritesheet: '${d.spritesheet}'`,
+    ]
+    if (d.isMask)
+        parts.push(`isMask: ${d.isMask}`);
+    var line = `  '${name}': {${parts.join(', ')}}`;
+    lines.push(line);
+  }
+  var text = '{\n' + lines.join(',\n') + '\n}';
+  editor.setValue(text);
   renderIcons();
 }
 

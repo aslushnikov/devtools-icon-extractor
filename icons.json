@@ -43,7 +43,6 @@
   'largeicon-clear': {x: -64, y: 0, width: 28, height: 24, spritesheet: 'largeicons', isMask: true},
   'largeicon-rotate-screen': {x: -192, y: -144, width: 28, height: 24, spritesheet: 'largeicons', isMask: true},
   'largeicon-phone': {x: -320, y: -96, width: 28, height: 24, spritesheet: 'largeicons', isMask: true},
-  'largeicon-block': {x: -32, y: -144, width: 28, height: 24, spritesheet: 'largeicons', isMask: true},
   'largeicon-layout-editor': {x: 0, y: -144, width: 28, height: 24, spritesheet: 'largeicons', isMask: true},
   'largeicon-foreground-color': {x: -128, y: -144, width: 28, height: 24, spritesheet: 'largeicons', isMask: true},
   'largeicon-background-color': {x: -96, y: -144, width: 28, height: 24, spritesheet: 'largeicons', isMask: true},
