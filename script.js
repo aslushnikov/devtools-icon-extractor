@@ -4,6 +4,7 @@ var editor;
 var descriptors = {};
 var icons = new Map();
 var iconErrors = new Map();
+var buckets = new Map();
 
 function saveZip() {
     if (!icons.size) {
@@ -15,11 +16,21 @@ function saveZip() {
     folder.file('smallIcons.svg', getSpriteSheetSVG('smallicons').outerHTML);
     folder.file('resourceGlyphs.svg', getSpriteSheetSVG('resourceicons').outerHTML);
     folder.file('toolbarButtonGlyphs.svg', getSpriteSheetSVG('largeicons').outerHTML);
-    folder = folder.folder('icons');
     for (var name of icons.keys()) {
         var svgText = icons.get(name).outerHTML;
-        var fileName = name + '.svg';
+        var bucket = buckets.get(name);
+        var fileName = bucket + '/' + name + '.svg';
         folder.file(fileName, svgText);
+        /*
+        if (bucket === 'small')
+            smallIconsFolder.file(fileName, svgText);
+        else if (bucket === 'medium')
+            mediumIconsFolder.file(fileName, svgText);
+        else if (bucket === 'large')
+            largeIconsFolder.file(fileName, svgText);
+        else
+            throw new Error('undefiend folder!');
+        */
     }
     zip.generateAsync({type:"blob"}).then(function (blob) {
         saveAs(blob, "icons.zip");
@@ -72,6 +83,7 @@ function extractIcons() {
 
   iconErrors = new Map();
   icons = new Map();
+  buckets = new Map();
   var enableSmallIcons = document.querySelector('#checkbox_smallIcons').checked;
   document.querySelector('#checkbox_smallIcons').checked = false;
   var enableMediumIcons = document.querySelector('#checkbox_mediumIcons').checked;
@@ -81,25 +93,28 @@ function extractIcons() {
   var skippedDescriptors = {};
   for (var name in descriptors) {
     var descriptor = descriptors[name];
+    if (descriptor.isMask)
+        name = name + '-mask';
     if (descriptor.width <= 10 && descriptor.height <= 10) {
         if (!enableSmallIcons) {
             skippedDescriptors[name] = descriptor;
             continue;
         }
+        buckets.set(name, 'small');
     } else if (descriptor.width === 28 && descriptor.height === 24) {
         if (!enableLargeIcons) {
             skippedDescriptors[name] = descriptor;
             continue;
         }
+        buckets.set(name, 'large');
     } else {
         if (!enableMediumIcons) {
             skippedDescriptors[name] = descriptor;
             continue;
         }
+        buckets.set(name, 'medium');
     }
 
-    if (descriptor.isMask)
-        name = name + '-mask';
     if (descriptor.transform) {
       iconErrors.set(name, 'Cannot extract icons with transforms');
       skippedDescriptors[name] = descriptor;

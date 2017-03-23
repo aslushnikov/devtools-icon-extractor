@@ -61,6 +61,12 @@ body {
 
 #extract-button {
     font-size: 24px;
+    margin: 4px;
+}
+
+#savezip {
+    font-size: 24px;
+    margin: 4px;
 }
 
 .output {
