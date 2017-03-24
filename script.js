@@ -6,6 +6,11 @@ var icons = new Map();
 var iconErrors = new Map();
 var buckets = new Map();
 
+// These scripts are needed only to be added to zip archive.
+var optimizeSh = '';
+var configyml = '';
+var mkspritesheets = '';
+
 function saveZip() {
     if (!icons.size) {
         alert('There are no icons to save.');
@@ -13,20 +18,19 @@ function saveZip() {
     }
     var zip = new JSZip();
     var folder = zip.folder('results');
-    folder.file('smallIcons.svg', getSpriteSheetSVG('smallicons').outerHTML);
-    folder.file('resourceGlyphs.svg', getSpriteSheetSVG('resourceicons').outerHTML);
-    folder.file('toolbarButtonGlyphs.svg', getSpriteSheetSVG('largeicons').outerHTML);
+    folder.file('svgoconfig.yml', configyml);
+    folder.file('optimize.sh', optimizeSh);
     for (var name of icons.keys()) {
         var svgText = icons.get(name).outerHTML;
         var bucket = buckets.get(name);
         var fileName = bucket + '/' + name + '.svg';
         folder.file(fileName, svgText);
     }
+    folder.folder('minimized').file('mkspritesheets.sh', mkspritesheets);
     zip.generateAsync({type:"blob"}).then(function (blob) {
         saveAs(blob, "icons.zip");
     });
 }
-
 
 function onDOMLoaded() {
   var container = document.querySelector('.descriptors div');
@@ -38,8 +42,17 @@ function onDOMLoaded() {
   var loadPromise = fetch('icons.json')
     .then(response => response.text())
     .then(text => editor.setValue(text));
+  var loadOptimizeSh = fetch('optimize.sh')
+    .then(response => response.text())
+    .then(text => optimizeSh = text);
+  var loadConfigYml = fetch('svgoconfig.yml')
+    .then(response => response.text())
+    .then(text => configyml = text);
+  var loadmkspritesheets = fetch('mkspritesheets.sh')
+    .then(response => response.text())
+    .then(text => mkspritesheets = text);
 
-  var promises = [loadPromise];
+  var promises = [loadPromise, loadOptimizeSh, loadConfigYml, loadmkspritesheets];
 
   // Wait for all spritesheets to load.
   var objectsToLoad = document.querySelectorAll('.spritesheet object');
