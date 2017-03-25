@@ -15,10 +15,10 @@ This project automates the process.
 
 ### Prerequisite
 
-1. [svgo](https://github.com/svg/svgo) available in PATH. Used to simplify SVG.
-2. [scour](https://github.com/scour-project/scour) available in PATH. Used to remove redundancy from SVG.
-3. [spritesheet-assembler](https://github.com/aslushnikov/spritesheet-assembler) to actually make spritesheets.
-4. [node.js](https://nodejs.org/en/) available in PATH. Needed to generate devtools descriptors.
+1. [node.js](https://nodejs.org/en/) available in PATH.
+2. [svgo](https://github.com/svg/svgo) available in PATH. Used to simplify SVG.
+3. [scour](https://github.com/scour-project/scour) available in PATH. Used to remove redundancy from SVG.
+4. [spass](https://github.com/aslushnikov/spritesheet-assembler) available in PATH. Used to assemble spritesheets.
 
 ### How to use
 
