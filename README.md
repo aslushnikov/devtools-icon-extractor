@@ -32,3 +32,11 @@ This project automates the process.
 7. Call `bash mkspritesheets.sh svgo+scour/` to make spritesheets out of heavily-optimized svgo+scour icons. This will result
    in `large.svg/medium.svg/small.svg` files with spritesheets and `large.json/medium.json/small.json` descriptors.
 8. Call `node gen-devtools-icons.js` to generate all the devtools descriptors.
+
+### Notes
+
+1. Using Web technologies to extract icons is the only viable option: browser has the most correct SVG renderer and API to traverse SVG and access SVG node locations (via `getBoundingClientRects()`)
+2. Since we don't know which gradient belongs to which icon (and it's tiring to parse SVG attributes), every icon is populated with all the definitions from the parent stylesheets. This implies the necessity of using **svgo** and **scour** to post-process results and remove redundancy.
+3. Generating spritesheets out of SVGs with an easy-to-process icon descriptors was hard. Explored solutions either didn't handle SVGs or didn't allow to easily post-process icon descriptors. This was solved by [spritesheet-assembler](https://github.com/aslushnikov/spritesheet-assembler).
+4. Generating inkscape-friendly SVGs turned out to be a pain: often times SVG was rendered correctly, but was misbehaving on
+attempts to select/move icons or change svg size.
