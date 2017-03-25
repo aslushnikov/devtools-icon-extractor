@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', onDOMLoaded);
 
+var sha = '0bf4b24ea3e78812375c7a23bdeaed013306518d';
+
 var editor;
 var descriptors = {};
 var icons = new Map();
@@ -34,6 +36,33 @@ function saveZip() {
     });
 }
 
+function githubURL(sha, frontendResource) {
+    return `https://raw.githubusercontent.com/ChromeDevTools/devtools-frontend/${sha}/front_end/${frontendResource}`;
+}
+
+function loadUpstreamImage(container, sha, frontendResource) {
+    var url = githubURL(sha, frontendResource);
+    return fetch(url).then(response=>response.text())
+        .then(onImageSVG)
+    
+    function onImageSVG(text) {
+        container.innerHTML = text;
+    }
+}
+
+function loadUpstreamDescriptors(sha) {
+    var url = githubURL(sha, 'ui/Icon.js');
+    return fetch(url).then(response=>response.text())
+        .then(onDescriptorsText)
+    
+    function onDescriptorsText(text) {
+        var startText = 'UI.Icon.Descriptors = ';
+        var start = text.indexOf(startText);
+        text = text.substring(start + startText.length).replace(';', '');
+        editor.setValue(text)
+    }
+}
+
 function onDOMLoaded() {
   var container = document.querySelector('.descriptors div');
   document.querySelector('#extract-button').addEventListener('click', extractIcons, false);
@@ -41,9 +70,6 @@ function onDOMLoaded() {
 
   document.querySelector('#savezip').addEventListener('click', saveZip);
 
-  var loadPromise = fetch('icons.json')
-    .then(response => response.text())
-    .then(text => editor.setValue(text));
   var loadOptimizeSh = fetch('optimize.sh')
     .then(response => response.text())
     .then(text => optimizeSh = text);
@@ -56,17 +82,24 @@ function onDOMLoaded() {
   var loadgenicons = fetch('gen-devtools-icons.js')
     .then(response => response.text())
     .then(text => genicons = text);
+  
+  document.querySelector('.sha').textContent = sha.substring(0, 8);
+  document.querySelector('.sha').href = `https://github.com/ChromeDevTools/devtools-frontend/commit/${sha}`;
+  var loadSmallIcons = loadUpstreamImage(document.querySelector('#smallicons'), sha, 'Images/src/smallIcons.svg');
+  var loadResourceGlyphs = loadUpstreamImage(document.querySelector('#resourceicons'), sha, 'Images/src/resourceGlyphs.svg');
+  var loadToolbarGlyphs = loadUpstreamImage(document.querySelector('#largeicons'), sha, 'Images/src/toolbarButtonGlyphs.svg');
+  var loadDescriptors = loadUpstreamDescriptors(sha);
 
-  var promises = [loadPromise, loadOptimizeSh, loadConfigYml, loadmkspritesheets, loadgenicons];
+  var promises = [
+    loadSmallIcons,
+    loadResourceGlyphs,
+    loadToolbarGlyphs,
+    loadOptimizeSh,
+    loadConfigYml,
+    loadmkspritesheets,
+    loadgenicons
+  ];
 
-  // Wait for all spritesheets to load.
-  var objectsToLoad = document.querySelectorAll('.spritesheet object');
-  for (var object of objectsToLoad) {
-    var fulfill;
-    var promise = new Promise(x => fulfill = x);
-    object.addEventListener('load', fulfill);
-    promises.push(promise);
-  }
   Promise.all(promises).then(() => {
     document.querySelector("#savezip").removeAttribute('disabled');
     document.querySelector("#extract-button").removeAttribute('disabled');
@@ -76,7 +109,7 @@ function onDOMLoaded() {
 function getSpriteSheetSVG(spritesheet) {
     var inputs = document.querySelector('.inputs');
     var svgRoot = inputs.querySelector('#' + spritesheet);
-    svgRoot = svgRoot ? svgRoot.contentDocument : null;
+    //svgRoot = svgRoot ? svgRoot.contentDocument : null;
     svgRoot = svgRoot ? svgRoot.querySelector('svg') : null;
     return svgRoot;
 }
@@ -92,9 +125,6 @@ function extractIcons() {
     return;
   }
 
-  iconErrors = new Map();
-  icons = new Map();
-  buckets = new Map();
   var enableSmallIcons = document.querySelector('#checkbox_smallIcons').checked;
   document.querySelector('#checkbox_smallIcons').checked = false;
   var enableMediumIcons = document.querySelector('#checkbox_mediumIcons').checked;
@@ -178,6 +208,13 @@ function resetRendering()
   extractedIcons.innerHTML='';
   var failedIcons = document.querySelector('.failed-icons');
   failedIcons.innerHTML='';
+
+  iconErrors = new Map();
+  icons = new Map();
+  buckets = new Map();
+  document.querySelector('#checkbox_smallIcons').checked = true;
+  document.querySelector('#checkbox_mediumIcons').checked = true;
+  document.querySelector('#checkbox_largeIcons').checked = true;
 }
 
 function renderIcons() {
@@ -243,7 +280,8 @@ function extractIcon(svgRoot, d, toBeRemoved) {
     iconSvg.appendChild(node);
   }
 
-  copyNodesInRegion(-d.x, -d.y, d.width, d.height, g, svgRoot, toBeRemoved);
+  var spritesheetPosition = svgRoot.getBoundingClientRect();
+  copyNodesInRegion(spritesheetPosition.left - d.x, spritesheetPosition.top -d.y, d.width, d.height, g, svgRoot, toBeRemoved);
   return iconSvg;
 }
 
@@ -257,7 +295,7 @@ function copyNodesInRegion(x, y, w, h, container, node, toBeRemoved) {
         toBeRemoved.push(node);
     return;
   }
-  var children = Array.prototype.slice.call(node.children);
+  var children = node.children;
   for (var child of children)
     copyNodesInRegion(x, y, w, h, container, child, toBeRemoved);
 }

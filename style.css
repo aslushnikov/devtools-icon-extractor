@@ -2,6 +2,25 @@ body {
     font-family: helvetica;
 }
 
+.sha {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: initial;
+    margin-left: 10px;
+    background-color: rgba(182, 173, 230, 0.32);
+    color: #333;
+    padding: 4px;
+    font-family: monospace;
+}
+
+.title {
+    font-size: 24px;
+    margin: 1em;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
 .inputs {
     display: flex;
 }
@@ -26,7 +45,7 @@ body {
     margin-top: 0;
 }
 
-.spritesheet object {
+.spritesheet svg {
     box-shadow: 1px 1px 2px 2px #ddd;
 }
 
