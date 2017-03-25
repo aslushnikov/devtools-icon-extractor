@@ -2,11 +2,14 @@ set -e
 
 function optimizeFolder {
     if [ -d $1 ]; then
-        mkdir -p minimized/$1
-        for i in $1/*.svg; do
-            scour $i minimized/$i
+        mkdir -p svgo/$1
+        svgo -q --config=svgoconfig.yml -f $1 --pretty -o svgo/$1
+
+        mkdir -p svgo+scour/$1
+        for i in svgo/$1/*.svg; do
+            file=$(basename $i)
+            scour $i svgo+scour/$1/$file
         done;
-        svgo -q --config=svgoconfig.yml -f minimized/$1 --pretty
     fi
 }
 
@@ -19,14 +22,14 @@ else
 fi
 
 if command -v scour >/dev/null; then
-    echo SVGO: found.
+    echo SCOUR: found.
 else
-    echo ERROR: svgo script is not found
+    echo ERROR: scour script is not found
     echo Visit https://github.com/scour-project/scour
     exit 1;
 fi
 
-optimizeFolder "small/"
-optimizeFolder "medium/"
-optimizeFolder "large/"
+optimizeFolder "small"
+optimizeFolder "medium"
+optimizeFolder "large"
 

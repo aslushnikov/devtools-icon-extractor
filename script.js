@@ -17,16 +17,16 @@ function saveZip() {
         return;
     }
     var zip = new JSZip();
-    var folder = zip.folder('results');
+    var folder = zip.folder('icons');
     folder.file('svgoconfig.yml', configyml);
     folder.file('optimize.sh', optimizeSh);
+    folder.file('mkspritesheets.sh', mkspritesheets);
     for (var name of icons.keys()) {
         var svgText = icons.get(name).outerHTML;
         var bucket = buckets.get(name);
         var fileName = bucket + '/' + name + '.svg';
         folder.file(fileName, svgText);
     }
-    folder.folder('minimized').file('mkspritesheets.sh', mkspritesheets);
     zip.generateAsync({type:"blob"}).then(function (blob) {
         saveAs(blob, "icons.zip");
     });
