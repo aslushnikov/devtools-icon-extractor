@@ -37,6 +37,7 @@ This project automates the process.
 
 1. Using Web technologies to extract icons is the only viable option: browser has the most correct SVG renderer and API to traverse SVG and access SVG node locations (via `getBoundingClientRects()`)
 2. Since we don't know which gradient belongs to which icon (and it's tiring to parse SVG attributes), every icon is populated with all the definitions from the parent stylesheets. This implies the necessity of using **svgo** and **scour** to post-process results and remove redundancy.
-3. Generating spritesheets out of SVGs with an easy-to-process icon descriptors was hard. Explored solutions either didn't handle SVGs or didn't allow to easily post-process icon descriptors. This was solved by [spritesheet-assembler](https://github.com/aslushnikov/spritesheet-assembler).
-4. Generating inkscape-friendly SVGs turned out to be a pain: often times SVG was rendered correctly, but was misbehaving on
+3. Certain svgo optimizations turned out to be destructive for SVG rendering. Custom [svgo config](https://github.com/aslushnikov/devtools-icon-extractor/blob/master/svgoconfig.yml) was done to keep rendering valid.
+4. Generating spritesheets out of SVGs with an easy-to-process icon descriptors was hard. Explored solutions either didn't handle SVGs or didn't allow to easily post-process icon descriptors. This was solved by [spritesheet-assembler](https://github.com/aslushnikov/spritesheet-assembler).
+5. Generating inkscape-friendly SVGs turned out to be a pain: often times SVG was rendered correctly, but was misbehaving on
 attempts to select/move icons or change svg size.
