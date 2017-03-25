@@ -28,7 +28,7 @@ plugins:
   - convertShapeToPath: true
   - convertStyleToAttrs: true
   - convertTransform: true
-  - mergePaths: true
+  - mergePaths: false
   - minifyStyles: true
   - moveElemsAttrsToGroup: true
   - moveGroupAttrsToElems: true
