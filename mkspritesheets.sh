@@ -17,7 +17,7 @@ fi
 dir=$1
 
 if [ -d large ]; then
-    spass -i $dir/large -o large.svg -d large.json --padding-right 28 --padding-bottom 24
+    spass -i $dir/large -o large.svg -d large.json
 fi
 
 if [ -d medium ]; then
