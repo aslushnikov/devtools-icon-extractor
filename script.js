@@ -10,6 +10,7 @@ var buckets = new Map();
 var optimizeSh = '';
 var configyml = '';
 var mkspritesheets = '';
+var genicons = '';
 
 function saveZip() {
     if (!icons.size) {
@@ -21,6 +22,7 @@ function saveZip() {
     folder.file('svgoconfig.yml', configyml);
     folder.file('optimize.sh', optimizeSh);
     folder.file('mkspritesheets.sh', mkspritesheets);
+    folder.file('gen-devtools-icons.js', genicons);
     for (var name of icons.keys()) {
         var svgText = icons.get(name).outerHTML;
         var bucket = buckets.get(name);
@@ -51,8 +53,11 @@ function onDOMLoaded() {
   var loadmkspritesheets = fetch('mkspritesheets.sh')
     .then(response => response.text())
     .then(text => mkspritesheets = text);
+  var loadgenicons = fetch('gen-devtools-icons.js')
+    .then(response => response.text())
+    .then(text => genicons = text);
 
-  var promises = [loadPromise, loadOptimizeSh, loadConfigYml, loadmkspritesheets];
+  var promises = [loadPromise, loadOptimizeSh, loadConfigYml, loadmkspritesheets, loadgenicons];
 
   // Wait for all spritesheets to load.
   var objectsToLoad = document.querySelectorAll('.spritesheet object');
